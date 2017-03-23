@@ -44,6 +44,9 @@ public abstract class Enemy implements GameObject {
         stats.position.y = y;
     }
 
+    protected boolean hasMoved(Map map, int x, int y) {
+        return !((map.getPlayer().getPosition().equals(x, y)) || (map.getTileAt(x, y).getTileType() == TileType.WALL));
+    }
     /**
      * Deals damage to the Player
      */

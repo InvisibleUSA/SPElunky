@@ -33,156 +33,67 @@ public class Whip extends Weapon
     @Override
     public ArrayList<Position> getEnemyPositionInDamageRadius(KeyCode rotation, Position playerPosition, Map map)
     {
-        ArrayList<Position> temp;
+        ArrayList<Position> temp = null;
         boolean hitEnemy;
         Tile tile;
         switch (rotation)
         {
             case UP:
-                hitEnemy = false;
-                for (int i = 0; i < 3; i++)
-                {
+                for (int i = -1; i < 3; i++) {
                     temp = getEnemyInTile(map, playerPosition.x + i, playerPosition.y - 1);
-                    hitEnemy = temp.size() != 0;
+                    hitEnemy = (temp != null) && (temp.size() != 0);
                     if (hitEnemy)
-                    {
                         break;
-                    } //TODO hier
-                    if (i > 0)
-                    {
-                        tile = map.getTileAt(playerPosition.x - i, playerPosition.y - 1);
-                        if (tile == null)break;
-                        for (GameObject object : tile.getCurrent())
-                        {
-                            if (object instanceof Enemy)
-                            {
-                                temp.add(object.getPosition());
-                                hitEnemy = true;
-                                break;
-                            }
-                        }
+                    if (i > 0) {
+                        temp = getEnemyInTile(map, playerPosition.x - i, playerPosition.y - 1);
+                        hitEnemy = (temp != null) && (temp.size() != 0);
                     }
                     if (hitEnemy)
-                    {
                         break;
-                    }
                 }
                 break;
             case DOWN:
-                hitEnemy = false;
                 for (int i = 0; i < 3; i++)
                 {
-                    tile = map.getTileAt(playerPosition.x + i, playerPosition.y + 1);
-                    if (tile == null)break;
-                    for (GameObject object : tile.getCurrent())
-                    {
-                        if (object instanceof Enemy)
-                        {
-                            temp.add(object.getPosition());
-                            hitEnemy = true;
-                            break;
-                        }
+                    temp = getEnemyInTile(map, playerPosition.x + i, playerPosition.y + 1);
+                    hitEnemy = (temp != null) && (temp.size() != 0);
+                    if (hitEnemy)
+                        break;
+                    if (i > 0) {
+                        temp = getEnemyInTile(map, playerPosition.x - i, playerPosition.y + 1);
+                        hitEnemy = (temp != null) && (temp.size() != 0);
                     }
                     if (hitEnemy)
-                    {
                         break;
-                    }
-                    if (i > 0)
-                    {
-                        tile = map.getTileAt(playerPosition.x - i, playerPosition.y + 1);
-                        if (tile == null)break;
-                        for (GameObject object : tile.getCurrent())
-                        {
-                            if (object instanceof Enemy)
-                            {
-                                temp.add(object.getPosition());
-                                hitEnemy = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (hitEnemy)
-                    {
-                        break;
-                    }
                 }
                 break;
             case RIGHT:
-                hitEnemy = false;
                 for (int i = 0; i < 3; i++)
                 {
-                    tile = map.getTileAt(playerPosition.x + 1, playerPosition.y - i);
-                    if (tile == null)break;
-                    for (GameObject object : tile.getCurrent())
-                    {
-                        if (object instanceof Enemy)
-                        {
-                            temp.add(object.getPosition());
-                            hitEnemy = true;
-                            break;
-                        }
+                    temp = getEnemyInTile(map, playerPosition.x + 1, playerPosition.y + i);
+                    hitEnemy = (temp != null) && (temp.size() != 0);
+                    if (hitEnemy)
+                        break;
+                    if (i > 0) {
+                        temp = getEnemyInTile(map, playerPosition.x + 1, playerPosition.y - i);
+                        hitEnemy = (temp != null) && (temp.size() != 0);
                     }
                     if (hitEnemy)
-                    {
                         break;
-                    }
-                    if (i > 0)
-                    {
-                        tile = map.getTileAt(playerPosition.x + 1, playerPosition.y + i);
-                        if (tile == null)break;
-                        for (GameObject object : tile.getCurrent())
-                        {
-                            if (object instanceof Enemy)
-                            {
-                                temp.add(object.getPosition());
-                                hitEnemy = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (hitEnemy)
-                    {
-                        break;
-                    }
                 }
                 break;
             case LEFT:
-                hitEnemy = false;
-                for (int i = 0; i < 3; i++)
-                {
-                    tile = map.getTileAt(playerPosition.x - 1, playerPosition.y - i);
-                    if (tile == null)break;
-                    for (GameObject object : tile.getCurrent())
-                    {
-                        if (object instanceof Enemy)
-                        {
-                            temp.add(object.getPosition());
-                            hitEnemy = true;
-                            break;
-                        }
+                for (int i = 0; i < 3; i++) {
+                    temp = getEnemyInTile(map, playerPosition.x - 1, playerPosition.y + i);
+                    hitEnemy = (temp != null) && (temp.size() != 0);
+                    if (hitEnemy)
+                        break;
+                    if (i > 0) {
+                        temp = getEnemyInTile(map, playerPosition.x - 1, playerPosition.y - i);
+                        hitEnemy = (temp != null) && (temp.size() != 0);
                     }
                     if (hitEnemy)
-                    {
                         break;
-                    }
-                    if (i > 0)
-                    {
-                        tile = map.getTileAt(playerPosition.x - 1, playerPosition.y + i);
-                        if (tile == null)break;
-                        for (GameObject object : tile.getCurrent())
-                        {
-                            if (object instanceof Enemy)
-                            {
-                                temp.add(object.getPosition());
-                                hitEnemy = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (hitEnemy)
-                    {
-                        break;
-                    }
                 }
                 break;
             default:

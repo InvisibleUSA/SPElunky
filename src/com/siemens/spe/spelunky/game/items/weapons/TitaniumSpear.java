@@ -33,81 +33,39 @@ public class TitaniumSpear extends Weapon {
         switch (rotation)
         {
             case UP:
-                hitEnemy = false;
                 for (int i = 1; i < 3; i++)
                 {
-                    for (GameObject object: map.getTileAt(playerPosition.x, playerPosition.y-i).getCurrent())
-                    {
-                        if (object instanceof Enemy)
-                        {
-                            temp.add(object.getPosition());
-                            hitEnemy = true;
-                            break;
-                        }
-                    }
+                    temp = getEnemyInTile(map, playerPosition.x, playerPosition.y - i);
+                    hitEnemy = temp.size() != 0;
                     if (hitEnemy)
-                    {
                         break;
-                    }
                 }
                 break;
             case DOWN:
-                hitEnemy = false;
                 for (int i = 1; i < 3; i++)
                 {
-                    for (GameObject object: map.getTileAt(playerPosition.x, playerPosition.y+i).getCurrent())
-                    {
-                        if (object instanceof Enemy)
-                        {
-                            temp.add(object.getPosition());
-                            hitEnemy = true;
-                            break;
-                        }
-                    }
+                    temp = getEnemyInTile(map, playerPosition.x , playerPosition.y + i);
+                    hitEnemy = temp.size() != 0;
                     if (hitEnemy)
-                    {
                         break;
-                    }
                 }
                 break;
             case RIGHT:
-                hitEnemy = false;
                 for (int i = 1; i < 3; i++)
                 {
-                    for (GameObject object: map.getTileAt(playerPosition.x+i, playerPosition.y).getCurrent())
-                    {
-                        if (object instanceof Enemy)
-                        {
-                            temp.add(object.getPosition());
-                            hitEnemy = true;
-                            break;
-                        }
-                    }
+                    temp = getEnemyInTile(map, playerPosition.x + i, playerPosition.y);
+                    hitEnemy = temp.size() != 0;
                     if (hitEnemy)
-                    {
                         break;
-                    }
                 }
                 break;
             case LEFT:
-                hitEnemy = false;
                 for (int i = 1; i < 3; i++)
                 {
-                    ArrayList<GameObject> list = map.getTileAt(playerPosition.x-i, playerPosition.y).getCurrent();
-                    System.out.println(list.size());
-                    for (GameObject object: list)
-                    {
-                        if (object instanceof Enemy)
-                        {
-                            temp.add(object.getPosition());
-                            hitEnemy = true;
-                            break;
-                        }
-                    }
+                    temp = getEnemyInTile(map, playerPosition.x - i, playerPosition.y);
+                    hitEnemy = temp.size() != 0;
                     if (hitEnemy)
-                    {
                         break;
-                    }
                 }
                 break;
             default:

@@ -84,6 +84,7 @@ public class Player implements GameObject
     public boolean dealDamage(Map map, KeyCode playerRotation, Position pos)
     {
         ArrayList<Position> list = currentWeapon.getEnemyPositionInDamageRadius(playerRotation,pos,map);
+        if (list == null) return false;
         for (Position position: list)
         {
             for (GameObject enemy: map.getTileAt(position).getCurrent())

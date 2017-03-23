@@ -31,20 +31,21 @@ public class OrangeSlime extends Enemy
         switch (cnt % 4)
         {
             case 0:
-                moveTo(map, x + 1, y);
+                moveTo(map, ++x, y);
                 break;
             case 1:
-                moveTo(map, x, y - 1);
+                moveTo(map, x, --y);
                 break;
             case 2:
-                moveTo(map, x - 1, y);
+                moveTo(map, --x, y);
                 break;
             case 3:
-                moveTo(map, x, y + 1);
+                moveTo(map, x, ++y);
                 break;
             default:
                 break;
         }
-        cnt++;
+        if (hasMoved(map, x,y))
+            cnt++;
     }
 }

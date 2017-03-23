@@ -26,8 +26,9 @@ public class BlueSlime extends Enemy
     @Override
     protected void move(Map map)
     {
+        int tmp = getPosition().x;
         moveTo(map, getPosition().x + cnt, getPosition().y);
-        if (!map.getPlayer().getPosition().equals(getPosition().x + cnt, getPosition().y))
+        if (hasMoved(map, tmp + cnt, getPosition().y))
             cnt *= -1;
     }
 }
