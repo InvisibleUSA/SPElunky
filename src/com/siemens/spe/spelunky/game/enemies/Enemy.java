@@ -25,6 +25,7 @@ public abstract class Enemy implements GameObject {
     private Stats stats;
     private javafx.scene.image.Image texture;
     private Position boxPosition;
+    protected boolean hasMoved;
 
     protected abstract void move(Map map);
 
@@ -37,16 +38,16 @@ public abstract class Enemy implements GameObject {
             dealDamage(map.getPlayer());
             return;
         }
-        if (map.getTileAt(x, y).getTileType() == TileType.WALL) {
+        if ((map.getTileAt(x, y).getTileType() == TileType.WALL) || (map.getTileAt(x,y).getCurrent().size() != 0)){
             return;
         }
+        Position src = stats.position.clone();
         stats.position.x = x;
         stats.position.y = y;
+        map.moveEntity(src, this);
+        hasMoved = true;
     }
 
-    protected boolean hasMoved(Map map, int x, int y) {
-        return !((map.getPlayer().getPosition().equals(x, y)) || (map.getTileAt(x, y).getTileType() == TileType.WALL));
-    }
     /**
      * Deals damage to the Player
      */
@@ -65,8 +66,8 @@ public abstract class Enemy implements GameObject {
     }
 
     public void update(Map map) {
+        hasMoved = false;
         if (moveTimer.ready()) {
-
             move(map);
         }
         if (animationTimer.ready()) {
@@ -88,6 +89,7 @@ public abstract class Enemy implements GameObject {
         this.getStats().setDamage(damage);
         this.boxPosition = boxPosition;
         this.animationSteps = animationSteps;
+        hasMoved = false;
     }
 
     @Override
