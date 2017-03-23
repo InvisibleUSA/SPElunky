@@ -1,0 +1,6 @@
+Großgeschrieben: Gegner (GKPY)
+klein: Items (6 Stück)
+x = tile
+o = leeres Feld
+c = character
+E = Exit
