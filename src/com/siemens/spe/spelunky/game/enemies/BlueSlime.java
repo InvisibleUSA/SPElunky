@@ -28,7 +28,7 @@ public class BlueSlime extends Enemy
     {
         int tmp = getPosition().x;
         moveTo(map, getPosition().x + cnt, getPosition().y);
-        if (hasMoved(map, tmp + cnt, getPosition().y))
+        if (hasMoved)
             cnt *= -1;
     }
 }

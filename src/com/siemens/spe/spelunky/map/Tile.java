@@ -73,9 +73,8 @@ public class Tile {
             tileType = TileType.GROUND;
         }
         else
-            current.forEach((GameObject go) -> {
-            if (go != map.getPlayer())
-                go.update(map);
-        });
+            for (int i = 0; i < current.size(); i++)
+                if (current.get(i) != map.getPlayer())
+                    current.get(i).update(map);
     }
 }

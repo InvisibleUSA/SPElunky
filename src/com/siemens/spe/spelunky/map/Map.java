@@ -89,6 +89,7 @@ public class Map {
     public Player getPlayer() {
         return player;
     }
+
     public Tile getTileAt(int posX, int posY) {
         if (!isValidIndex(posX, posY))
             return null;
@@ -119,6 +120,21 @@ public class Map {
         boundaries[3] = y + Settings.viewPort;
         if (boundaries[3] > area[0].length - 1) boundaries[3] = area[0].length - 1;
         return boundaries;
+    }
+
+    public void moveEntity(Position src, GameObject entity) {
+        Position dest = entity.getPosition();
+        if (!isValidIndex(src) || !isValidIndex(dest)) throw new IndexOutOfBoundsException();
+        if (area[dest.x][dest.y].getTileType() == TileType.WALL) throw new IllegalArgumentException("Destination is blocked");
+        for (int i = 0; i < area[src.x][src.y].getCurrent().size(); i++) {
+            if (area[src.x][src.y].getCurrent().get(i) == entity)
+                area[src.x][src.y].getCurrent().remove(i);
+        }
+        if (area[src.x][src.y].getCurrent().size() == 0)
+            area[src.x][src.y].setTileType(TileType.GROUND);
+        area[dest.x][dest.y].addGameObject(entity);
+        if (area[dest.x][dest.y].getTileType() == TileType.GROUND)
+            area[dest.x][dest.y].setTileType(TileType.ENTITY);
     }
 
     public void remove(Position p, GameObject object) {
@@ -153,35 +169,6 @@ public class Map {
                 }
             }
         }
-        refresh();
-    }
-
-    private void refresh() {
-        Tile[][] tmp = new Tile[area.length][area[0].length];
-        for (int i = 0; i < area.length; i++)
-            for (int j = 0; j < area[i].length; j++)
-                tmp[i][j] = new Tile(i,j);
-        for (int i = 0; i < area.length; i++) {
-            for (int j = 0; j < area[i].length; j++) {
-                tmp[i][j].setTileType(area[i][j].getTileType());
-                for (int k = 0; k < area[i][j].getCurrent().size(); k++) {
-                    if (area[i][j].getCurrent().get(k).getPosition().equals(-1, -1))
-                        throw new RuntimeException("Object without position in map");
-                    tmp[area[i][j].getCurrent().get(k).getPosition().x][area[i][j].getCurrent().get(k).getPosition().y].addGameObject(area[i][j].getCurrent().get(k));
-                }
-            }
-        }
-        for (int i = 0; i < tmp.length; i++) {
-            for (int j = 0; j < tmp[i].length; j++) {
-                if ((tmp[i][j].getCurrent().size() != 0) && (tmp[i][j].getTileType() != TileType.EXIT_STAIRS)){
-                    tmp[i][j].setTileType(TileType.ENTITY);
-                }
-                else if (tmp[i][j].getTileType() == TileType.ENTITY){
-                    tmp[i][j].setTileType(TileType.GROUND);
-                }
-            }
-        }
-        area = tmp;
     }
 
     public int getHeight() {

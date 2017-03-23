@@ -60,7 +60,6 @@ public class Player implements GameObject
             if (death != null) {
                 mediaPlayer = new MediaPlayer(death);
                 mediaPlayer.setVolume(10.0);
-                System.out.println(mediaPlayer.getVolume());
                 mediaPlayer.play();
             }
             Game.gameState = Game.gameState.GAME_OVER_LOST;
@@ -69,7 +68,6 @@ public class Player implements GameObject
         if (hit != null) {
             mediaPlayer = new MediaPlayer(hit);
             mediaPlayer.setVolume(10.0);
-            System.out.println(mediaPlayer.getVolume());
             mediaPlayer.play();
         }
     }
@@ -205,16 +203,7 @@ public class Player implements GameObject
             default:
                 return;
         }
-        /*
-        for (GameObject element : map.getTileAt(new Position(this.getPosition().x + x, this.getPosition().y + y)).getCurrent())
-        {
-            if (element instanceof Enemy && keyCode != null)
-            {
-                dealDamage(map, keyCode, this.getPosition());
-                return;
-            }
-        }
-        */
+
         ArrayList<GameObject> tmpAl = map.getTileAt(new Position(this.getPosition().x + x, this.getPosition().y + y)).getCurrent();
         for (int i = 0; i < tmpAl.size(); i++)
         {
@@ -225,8 +214,10 @@ public class Player implements GameObject
         }
         if (map.getTileAt(getPosition().x + x, getPosition().y + y).getTileType() == TileType.EXIT_STAIRS)
             Game.gameState = GameState.GAME_OVER_WON;
+        Position src = stats.position.clone();
         this.getStats().position.x += x;
         this.getStats().position.y += y;
+        map.moveEntity(src, this);
     }
 
     private void pickupItem(Item item, Map map)

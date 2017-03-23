@@ -41,7 +41,6 @@ public class Window extends Application {
         @Override
         public void handle(KeyEvent event) {
             keyInput = event;
-            System.out.println(event.getCode().toString());
         }
     }
 
