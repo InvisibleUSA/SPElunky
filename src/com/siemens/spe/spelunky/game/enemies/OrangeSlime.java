@@ -45,7 +45,7 @@ public class OrangeSlime extends Enemy
             default:
                 break;
         }
-        if (hasMoved(map, x,y))
+        if (hasMoved)
             cnt++;
     }
 }
