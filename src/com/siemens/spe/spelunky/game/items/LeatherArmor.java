@@ -13,7 +13,7 @@ public class LeatherArmor extends Item  {
     public LeatherArmor(Position pos){
         super("LeatherArmor", pos);
         name = "LeatherArmor";
-        stats.armor += 0.25;
+        stats.armor = 0.25;
     }
 
 

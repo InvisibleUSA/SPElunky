@@ -20,4 +20,16 @@ public class Stats {
     {
         return damage;
     }
+
+    public void add(Stats s) {
+        maxHealth += s.maxHealth;
+        if ((s.currentHealth + currentHealth) > maxHealth) {
+            currentHealth = maxHealth;
+        }
+        else {
+            currentHealth += s.currentHealth;
+        }
+        armor += s.armor;
+        damage += s.damage;
+    }
 }

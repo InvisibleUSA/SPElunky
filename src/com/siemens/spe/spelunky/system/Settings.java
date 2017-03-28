@@ -14,5 +14,6 @@ public class Settings {
     public static int healthBarHeight = 30;
 
     public static int EnemyWaitTicK = 1;
-    public static int AnimationTickTimer = 0;
+    public static int AnimationTimer = 125;
+    public static int KeyHitTimer = 500;
 }

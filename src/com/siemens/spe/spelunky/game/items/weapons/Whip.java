@@ -35,7 +35,6 @@ public class Whip extends Weapon
     {
         ArrayList<Position> temp = null;
         boolean hitEnemy;
-        Tile tile;
         switch (rotation)
         {
             case UP:

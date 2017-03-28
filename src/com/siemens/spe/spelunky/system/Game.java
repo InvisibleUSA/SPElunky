@@ -1,7 +1,9 @@
 package com.siemens.spe.spelunky.system;
 
 import com.siemens.spe.spelunky.map.Map;
+import com.siemens.spe.spelunky.system.utility.timer.TimerHandle;
 import com.siemens.spe.spelunky.system.utility.timer.TimerManager;
+import com.siemens.spe.spelunky.system.utility.timer.TimerType;
 import com.siemens.spe.spelunky.ui.UIHealthBar;
 import com.siemens.spe.spelunky.ui.UIInventoryBox;
 import com.siemens.spe.spelunky.ui.UIMessageBox;
@@ -27,9 +29,11 @@ public class Game {
     private UIInventoryBox inventoryBox;
     private UIMessageBox messageBox;
     private long startingTime;
+    private long timeSinceLastUpdate;
     private GraphicsContext graphicsContext, gcBuffer;
     private Canvas buffer;
     private MediaPlayer mediaPlayer;
+    private TimerHandle clickTimer = TimerManager.requestTimerHandle(TimerType.AUTO_COUNTDOWN_TIMER, Settings.KeyHitTimer);
     /**
      * defines the current game state. This state is checked before each frame is drawn. *
      */
@@ -38,12 +42,13 @@ public class Game {
     public Game(GraphicsContext gc) {
         graphicsContext = gc;
         startingTime = System.nanoTime();
+        timeSinceLastUpdate = startingTime;
         Media sound = null;
         try {
             sound = new Media(new File(System.getProperty("user.dir") + "\\res\\sounds\\zone1_1.mp3").toURI().toString());
             TextureManager.init(System.getProperty("user.dir") + "\\res");
             map = new Map();
-            map.loadMap(System.getProperty("user.dir") + "\\map2.txt");
+            map.loadMap(System.getProperty("user.dir") + "\\map.txt");
             healthBar = new UIHealthBar(new Position(Settings.healthBarPositionX, Settings.healthBarPositionY), new Position(Settings.healthBarWidth, Settings.healthBarHeight));
             inventoryBox = new UIInventoryBox(new Position(Settings.screenDimensionX, Settings.screenDimensionY), new Position(98, 558), new Position(15, 50), 66, 98);
             inventoryBox.setBackground(TextureManager.getTexture("InventoryBackground"));
@@ -80,11 +85,16 @@ public class Game {
 
     public void update(long now) {
         long timepassed = now - startingTime;
+        long elapsed = (now - timeSinceLastUpdate)/1000000;
+
+        timeSinceLastUpdate = now;
+        TimerManager.update(elapsed);
+
         switch (gameState) {
             case GAME_RUNNING:
                 messageBox = null;
-                if (Window.keyInput != null) {
-                    TimerManager.update(timepassed);
+                if (Window.keyInput != null && clickTimer.ready()) {  //Switch && for || to move freely without beat binding
+                    TimerManager.tick();
                     map.update();
                     inventoryBox.update(map);
                     healthBar.update(map);

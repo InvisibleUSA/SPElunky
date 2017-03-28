@@ -21,28 +21,48 @@ public class Inventory
      * Adds @param item to first free spot in Inventory
      *
      * @param item
+     * @return index where item was stored
      */
-    void addToInv(Item item, Map map, Position pos)
+    int addToInv(Item item, Map map, Position pos)
     {
         for (int i = 0; i < 5; i++)
         {
             if (inventory[i] == null)
             {
-                if (item instanceof Weapon)
-                {
-
-                }
                 inventory[i] = item;
                 map.remove(item.getPosition().x, item.getPosition().y, item);
                 item.getStats().position = new Position(-1,-1);
                 inventoryFull = false;
-                return;
+                return i;
             } else
             {
                 inventoryFull = true;
                 dcnt = 0;
             }
         }
+        return -1;
+    }
+
+    /**
+     * adds an item to inventory. Call this function only when item was not on map.
+     * @param item item to add to inventory
+     * @return index where item was stored
+     */
+    int addToInv(Item item) {
+        for (int i = 0; i < 5; i++)
+        {
+            if (inventory[i] == null)
+            {
+                inventory[i] = item;
+                inventoryFull = false;
+                return i;
+            } else
+            {
+                inventoryFull = true;
+                dcnt = 0;
+            }
+        }
+        return -1;
     }
 
     public Item getItemAt(int index)
@@ -63,7 +83,6 @@ public class Inventory
         {
             UIMessageBox box = new UIMessageBox("Inventory full to drop Item press Q + item position");
             box.draw(gc);
-            //gc.fillText("Inventory full to drop Item press Q + item position", 0, 0);
             dcnt++;
         }
     }
@@ -92,6 +111,8 @@ public class Inventory
         {
             inventory[index].getStats().position = new Position(player.getPosition().x, player.getPosition().y - 1);
         }
+
+        if (inventory[index].getStats().position.equals(-1, -1)) return;
         map.getTileAt(inventory[index].getPosition()).addGameObject(inventory[index]);
         inventory[index] = null;
     }

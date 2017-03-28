@@ -20,7 +20,11 @@ public class AutoTickTimer implements ITimer {
     }
 
     @Override
-    public void update(double... values) {
+    public void update(double values) {
+    }
+
+    public void tick()
+    {
         --currentTicks;
         if (currentTicks < 0) {
             currentTicks = ticks;

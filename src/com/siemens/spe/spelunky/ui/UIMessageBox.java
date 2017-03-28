@@ -42,7 +42,7 @@ public class UIMessageBox implements GameObject{
         }
         messageFont = Font.loadFont(FONT_PATH, MESSAGE_SIZE);
         gc.setFont(messageFont);
-        gc.fillText(message, rootMessageBox.x + 60, rootMessageBox.y+ sizeMessageBox.y/2 + 40,sizeMessageBox.x - 60);
+        gc.fillText(message, rootMessageBox.x + 60, rootMessageBox.y+ sizeMessageBox.y/2 + 40,sizeMessageBox.x - 120);
 
     }
 

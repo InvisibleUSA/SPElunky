@@ -1,5 +1,6 @@
 package com.siemens.spe.spelunky.map;
 
+import com.siemens.spe.spelunky.game.enemies.Enemy;
 import com.siemens.spe.spelunky.system.*;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -39,7 +40,15 @@ public class Tile {
 
     public void addGameObject(GameObject obj) {
         current.add(obj);
+        if (tileType == TileType.GROUND)
+            tileType = TileType.ENTITY;
+    }
 
+    public boolean hasEnemy() {
+        for (GameObject go: current)
+            if (go instanceof Enemy)
+                return true;
+        return false;
     }
 
     public ArrayList<GameObject> getCurrent() {

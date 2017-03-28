@@ -19,7 +19,7 @@ import javafx.scene.paint.Color;
  */
 public abstract class Enemy implements GameObject {
     private TimerHandle moveTimer = TimerManager.requestTimerHandle(TimerType.AUTO_TICK_TIMER, Settings.EnemyWaitTicK);
-    private TimerHandle animationTimer = TimerManager.requestTimerHandle(TimerType.AUTO_TICK_TIMER, Settings.AnimationTickTimer);
+    private TimerHandle animationTimer = TimerManager.requestTimerHandle(TimerType.AUTO_COUNTDOWN_TIMER, Settings.AnimationTimer);
     private int currentAnimationSteps;
     private int animationSteps;
     private Stats stats;
@@ -70,13 +70,6 @@ public abstract class Enemy implements GameObject {
         if (moveTimer.ready()) {
             move(map);
         }
-        if (animationTimer.ready()) {
-            if (currentAnimationSteps < animationSteps) {
-                ++currentAnimationSteps;
-            } else {
-                currentAnimationSteps = 0;
-            }
-        }
     }
 
     public Enemy(double health, String texture, double damage, Position pos, Position boxPosition, int animationSteps) {
@@ -94,6 +87,14 @@ public abstract class Enemy implements GameObject {
 
     @Override
     public void draw(GraphicsContext gc) {
+        if (animationTimer.ready()) {
+            if (currentAnimationSteps < animationSteps) {
+                ++currentAnimationSteps;
+            } else {
+                currentAnimationSteps = 0;
+            }
+        }
+
         gc.drawImage(texture, currentAnimationSteps * boxPosition.x, 0, boxPosition.x, boxPosition.y, stats.position.x * Settings.tileDimensionsXY, stats.position.y * Settings.tileDimensionsXY, Settings.tileDimensionsXY, Settings.tileDimensionsXY);
 
         if (stats.currentHealth / stats.maxHealth < 1) {

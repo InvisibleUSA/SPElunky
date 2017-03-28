@@ -19,8 +19,8 @@ public class AutoCountdownWaitingTimer implements ITimer {
         this.ready = false;
     }
 
-    public void update(double... values) {
-        double elapsedMS = values[0];
+    public void update(double values) {
+        double elapsedMS = values;
         currentMS -= elapsedMS;
         if (currentMS <= 0) {
             currentMS = 0;
@@ -31,6 +31,7 @@ public class AutoCountdownWaitingTimer implements ITimer {
     public boolean ready() {
         if (ready) {
             ready = false;
+            currentMS = timeSpanMS;
             return true;
         }
         return false;

@@ -19,8 +19,8 @@ public class AutoCountdownTimer implements ITimer {
         this.ready = false;
     }
 
-    public void update(double... values) {
-        double elapsedMS = values[0];
+    public void update(double values) {
+        double elapsedMS = values;
         currentMS -= elapsedMS;
         if (currentMS <= 0) {
             double tempMS = Math.abs(currentMS);

@@ -30,7 +30,6 @@ public class Player implements GameObject
     private Image texture;
     private Inventory inventory = new Inventory();
     private boolean dropNext = false;
-    private Weapon currentWeapon = new Dagger(new Position(-1,-1));
     private int currentWeaponIndex = -1;
     private MediaPlayer mediaPlayer;
     private Media hit = new Media(new File(System.getProperty("user.dir") + "\\res\\sounds\\hit.mp3").toURI().toString());
@@ -77,18 +76,30 @@ public class Player implements GameObject
     }
 
     /**
-     * Deals damage to Enemy
+     * Deals damage to Enemy, if no weapon is equipped, function returns true
      */
     public boolean dealDamage(Map map, KeyCode playerRotation, Position pos)
     {
-        ArrayList<Position> list = currentWeapon.getEnemyPositionInDamageRadius(playerRotation,pos,map);
+        if (currentWeaponIndex == -1) {
+            switch (playerRotation) {
+                case UP:
+                    return map.getTileAt(pos.x, pos.y - 1).hasEnemy();
+                case DOWN:
+                    return map.getTileAt(pos.x, pos.y + 1).hasEnemy();
+                case LEFT:
+                    return map.getTileAt(pos.x - 1, pos.y).hasEnemy();
+                case RIGHT:
+                    return map.getTileAt(pos.x + 1, pos.y).hasEnemy();
+            }
+        }
+        ArrayList<Position> list = ((Weapon) inventory.getItemAt(currentWeaponIndex)).getEnemyPositionInDamageRadius(playerRotation,pos,map);
         if (list == null) return false;
         for (Position position: list)
         {
             for (GameObject enemy: map.getTileAt(position).getCurrent())
             {
                 if (enemy instanceof Enemy) {
-                    ((Enemy)enemy).takeDamage(currentWeapon.getStats().damage + stats.damage, map);
+                    ((Enemy)enemy).takeDamage(inventory.getItemAt(currentWeaponIndex).getStats().damage + stats.damage, map);
                     return true;
                 }
             }
@@ -100,7 +111,7 @@ public class Player implements GameObject
     public void move(Map map)
     {
         Position pos = this.getStats().position;
-        int x = 0, y = 0;
+        int x = 0, y = 0, index = -1;
         KeyCode keyCode = null;
         switch (Window.keyInput.getCode())
         {
@@ -144,64 +155,33 @@ public class Player implements GameObject
                 dropNext = !dropNext;
                 break;
             case DIGIT1:
-                if (dropNext)
-                {
-                    inventory.dropItem(0, map, this);
-                    dropNext = false;
-                }
-                else
-                {
-                    useItem(0);
-                }
+                index = 0;
                 break;
             case DIGIT2:
-                if (dropNext)
-                {
-                    inventory.dropItem(1, map, this);
-                    dropNext = false;
-                }
-                else
-                {
-                    useItem(1);
-                }
+                index = 1;
                 break;
             case DIGIT3:
-                if (dropNext)
-                {
-                    inventory.dropItem(2, map, this);
-                    dropNext = false;
-                }
-                else
-                {
-                    useItem(2);
-                }
+                index = 2;
                 break;
             case DIGIT4:
-                if (dropNext)
-                {
-                    inventory.dropItem(3, map, this);
-                    dropNext = false;
-                }
-                else
-                {
-                    useItem(3);
-                }
+                index = 3;
                 break;
             case DIGIT5:
-                if (dropNext)
-                {
-                    inventory.dropItem(4, map, this);
-                    dropNext = false;
-                }
-                else
-                {
-                    useItem(4);
-                }
+                index = 4;
                 break;
             case SPACE:
                 break;
             default:
                 return;
+        }
+        if (index != -1) {
+            if (dropNext) {
+                inventory.dropItem(index, map, this);
+                dropNext = false;
+                if (index == currentWeaponIndex) currentWeaponIndex = -1;
+            } else {
+                useItem(index);
+            }
         }
 
         ArrayList<GameObject> tmpAl = map.getTileAt(new Position(this.getPosition().x + x, this.getPosition().y + y)).getCurrent();
@@ -222,33 +202,36 @@ public class Player implements GameObject
 
     private void pickupItem(Item item, Map map)
     {
-        if (item instanceof Weapon)
+        int index = inventory.addToInv(item, map, item.getPosition());
+        if ((item instanceof Weapon) && (index != -1))
         {
-            currentWeapon = (Weapon) item;
+            currentWeaponIndex = index;
         }
-        inventory.addToInv(item, map, item.getPosition());
     }
 
     private void useItem(int index)
     {
         if (inventory.getItemAt(index) instanceof Weapon)
         {
-            currentWeapon = (Weapon) inventory.getItemAt(index);
             currentWeaponIndex = index;
             return;
         }
         if (inventory.getItemAt(index) != null)
         {
-            Stats tmpStats = inventory.useItemAt(index).getStats();
-            if ((tmpStats.currentHealth + this.getStats().currentHealth) > this.getStats().maxHealth){this.getStats().currentHealth = this.getStats().maxHealth;}else{this.getStats().currentHealth += tmpStats.currentHealth;}
-            this.getStats().maxHealth += tmpStats.maxHealth;
-            this.getStats().damage += tmpStats.damage;
+            stats.add(inventory.useItemAt(index).getStats());
         }
     }
 
     @Override
     public void draw(GraphicsContext gc)
     {
+        if (playerAnimationTimer.ready()) {
+            if (animationSteps < 3) {
+                ++animationSteps;
+            } else {
+                animationSteps = 0;
+            }
+        }
         gc.drawImage(texture, animationSteps*boxPosition.y, 0, boxPosition.x, boxPosition.y, stats.position.x * Settings.tileDimensionsXY, (stats.position.y * Settings.tileDimensionsXY) - 20, Settings.tileDimensionsXY, Settings.tileDimensionsXY);
         inventory.draw(gc);
     }
@@ -257,13 +240,6 @@ public class Player implements GameObject
     public void update(Map map)
     {
         move(map);
-        if (playerAnimationTimer.ready()) {
-            if (animationSteps < 3) {
-                ++animationSteps;
-            } else {
-                animationSteps = 0;
-            }
-        }
     }
 
     @Override
@@ -279,8 +255,9 @@ public class Player implements GameObject
         this.getStats().maxHealth = 5;
         this.getStats().armor = 0;
         stats.position = pos;
-        playerAnimationTimer = TimerManager.requestTimerHandle(TimerType.AUTO_TICK_TIMER, -1);
+        playerAnimationTimer = TimerManager.requestTimerHandle(TimerType.AUTO_COUNTDOWN_TIMER, Settings.AnimationTimer);
         boxPosition = new Position(384/4,100);
+        currentWeaponIndex = inventory.addToInv(new Dagger(new Position(-1, -1)));
     }
     public Inventory getPlayerInventory()
     {

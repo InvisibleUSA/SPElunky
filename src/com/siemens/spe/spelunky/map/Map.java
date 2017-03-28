@@ -124,6 +124,7 @@ public class Map {
 
     public void moveEntity(Position src, GameObject entity) {
         Position dest = entity.getPosition();
+        if (dest.equals(src)) return;
         if (!isValidIndex(src) || !isValidIndex(dest)) throw new IndexOutOfBoundsException();
         if (area[dest.x][dest.y].getTileType() == TileType.WALL) throw new IllegalArgumentException("Destination is blocked");
         for (int i = 0; i < area[src.x][src.y].getCurrent().size(); i++) {
