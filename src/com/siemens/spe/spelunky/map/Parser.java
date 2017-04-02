@@ -20,6 +20,7 @@ public class Parser {
     static final char SYMBOL_ENEMY_BLUE_SLIME = 'K';
     static final char SYMBOL_ENEMY_ORANGE_SLIME = 'P';
     static final char SYMBOL_ENEMY_ZOMBIE = 'Y';
+    static final char SYMBOL_ENEMY_SKELETON = 'S';
     static final char SYMBOL_ITEM_DAGGER = 'n';
     static final char SYMBOL_ITEM_LEATHER_ARMOR = 'm';
     static final char SYMBOL_ITEM_TITANIUM_SPEAR = 'l';
@@ -37,7 +38,7 @@ public class Parser {
             file = Paths.get(filename);
             f = Files.newInputStream(file);
             BufferedReader br = new BufferedReader(new InputStreamReader(f));
-            String line = null;
+            String line;
             while ((line = br.readLine()) != null) lines.add(line);
         } finally {
             try {

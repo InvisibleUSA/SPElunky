@@ -53,6 +53,9 @@ public class Map {
             case Parser.SYMBOL_ENEMY_ZOMBIE:
                 t.addGameObject(new Zombie(pos.clone()));
                 break;
+            case Parser.SYMBOL_ENEMY_SKELETON:
+                t.addGameObject(new Skeleton(pos.clone()));
+                break;
             case Parser.SYMBOL_ITEM_DAGGER:
                 t.addGameObject(new Dagger(pos.clone()));
                 break;

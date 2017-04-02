@@ -1,6 +1,7 @@
 package com.siemens.spe.spelunky.map;
 
 import com.siemens.spe.spelunky.game.enemies.Enemy;
+import com.siemens.spe.spelunky.game.player.Player;
 import com.siemens.spe.spelunky.system.*;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -49,6 +50,28 @@ public class Tile {
             if (go instanceof Enemy)
                 return true;
         return false;
+    }
+
+    public boolean blocksEnemies() {
+        boolean hasPlayer = false;
+        for (GameObject go : current) {
+            if (go instanceof Player) {
+                hasPlayer= true;
+                break;
+            }
+        }
+        return blocksPlayer() || hasPlayer;
+    }
+
+    public boolean blocksPlayer() {
+        boolean hasEnemy = false;
+        for (GameObject go : current) {
+            if (go instanceof Enemy) {
+                hasEnemy = true;
+                break;
+            }
+        }
+        return (tileType == TileType.WALL) || (hasEnemy);
     }
 
     public ArrayList<GameObject> getCurrent() {

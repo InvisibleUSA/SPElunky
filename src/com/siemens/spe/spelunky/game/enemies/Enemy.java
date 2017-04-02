@@ -18,13 +18,13 @@ import javafx.scene.paint.Color;
  * Created by 154374ln on 21.03.2017.
  */
 public abstract class Enemy implements GameObject {
-    private TimerHandle moveTimer = TimerManager.requestTimerHandle(TimerType.AUTO_TICK_TIMER, Settings.EnemyWaitTicK);
+    private TimerHandle moveTimer = TimerManager.requestTimerHandle(TimerType.AUTO_TICK_TIMER, Settings.EnemyWaitTick);
     private TimerHandle animationTimer = TimerManager.requestTimerHandle(TimerType.AUTO_COUNTDOWN_TIMER, Settings.AnimationTimer);
     private int currentAnimationSteps;
     private int animationSteps;
     private Stats stats;
     private javafx.scene.image.Image texture;
-    private Position boxPosition;
+    private Position rectAnimationFrame;
     protected boolean hasMoved;
 
     protected abstract void move(Map map);
@@ -38,7 +38,8 @@ public abstract class Enemy implements GameObject {
             dealDamage(map.getPlayer());
             return;
         }
-        if ((map.getTileAt(x, y).getTileType() == TileType.WALL) || (map.getTileAt(x,y).getCurrent().size() != 0)){
+        //TODO check if the function works previous: (map.getTileAt(x, y).getTileType() == TileType.WALL) || (map.getTileAt(x,y).getCurrent().size() != 0)
+        if (map.getTileAt(x, y).blocksEnemies()){
             return;
         }
         Position src = stats.position.clone();
@@ -72,7 +73,19 @@ public abstract class Enemy implements GameObject {
         }
     }
 
-    public Enemy(double health, String texture, double damage, Position pos, Position boxPosition, int animationSteps) {
+    /**
+     * This constructor should be called as super-constructor when inheriting from Enemy.
+     * All parameters except position should be absolute in child class.
+     *
+     * If you want to have an animation for the enemy, simply use a single image file where all animation frames are in a single line (and have the same width and height).
+     * @param health Amount of health the enemy has
+     * @param texture name of picture used when drawing the enemy
+     * @param damage damage the enemy deals when it hits the player
+     * @param pos the position it starts at
+     * @param rectAnimationFrame height and width of a single frame, whole picture if null
+     * @param animationSteps number of frames the animation has
+     */
+    public Enemy(double health, String texture, double damage, Position pos, Position rectAnimationFrame, int animationSteps) {
         stats = new Stats();
         stats.currentHealth = health;
         stats.maxHealth = health;
@@ -80,9 +93,12 @@ public abstract class Enemy implements GameObject {
         stats.position = pos;
         this.texture = TextureManager.getTexture(texture);
         this.getStats().setDamage(damage);
-        this.boxPosition = boxPosition;
+        this.rectAnimationFrame = rectAnimationFrame;
         this.animationSteps = animationSteps;
         hasMoved = false;
+
+        if (this.rectAnimationFrame == null)
+            this.rectAnimationFrame = new Position((int) this.texture.getWidth(), (int) this.texture.getHeight());
     }
 
     @Override
@@ -95,7 +111,7 @@ public abstract class Enemy implements GameObject {
             }
         }
 
-        gc.drawImage(texture, currentAnimationSteps * boxPosition.x, 0, boxPosition.x, boxPosition.y, stats.position.x * Settings.tileDimensionsXY, stats.position.y * Settings.tileDimensionsXY, Settings.tileDimensionsXY, Settings.tileDimensionsXY);
+        gc.drawImage(texture, currentAnimationSteps * rectAnimationFrame.x, 0, rectAnimationFrame.x, rectAnimationFrame.y, stats.position.x * Settings.tileDimensionsXY, stats.position.y * Settings.tileDimensionsXY, Settings.tileDimensionsXY, Settings.tileDimensionsXY);
 
         if (stats.currentHealth / stats.maxHealth < 1) {
             gc.setFill(Color.LIGHTGRAY);

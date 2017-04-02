@@ -48,7 +48,7 @@ public class Game {
             sound = new Media(new File(System.getProperty("user.dir") + "\\res\\sounds\\zone1_1.mp3").toURI().toString());
             TextureManager.init(System.getProperty("user.dir") + "\\res");
             map = new Map();
-            map.loadMap(System.getProperty("user.dir") + "\\map.txt");
+            map.loadMap(System.getProperty("user.dir") + "\\map2.txt");
             healthBar = new UIHealthBar(new Position(Settings.healthBarPositionX, Settings.healthBarPositionY), new Position(Settings.healthBarWidth, Settings.healthBarHeight));
             inventoryBox = new UIInventoryBox(new Position(Settings.screenDimensionX, Settings.screenDimensionY), new Position(98, 558), new Position(15, 50), 66, 98);
             inventoryBox.setBackground(TextureManager.getTexture("InventoryBackground"));
