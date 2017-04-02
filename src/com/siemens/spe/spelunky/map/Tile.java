@@ -56,7 +56,7 @@ public class Tile {
         boolean hasPlayer = false;
         for (GameObject go : current) {
             if (go instanceof Player) {
-                hasPlayer= true;
+                hasPlayer = true;
                 break;
             }
         }
@@ -64,14 +64,7 @@ public class Tile {
     }
 
     public boolean blocksPlayer() {
-        boolean hasEnemy = false;
-        for (GameObject go : current) {
-            if (go instanceof Enemy) {
-                hasEnemy = true;
-                break;
-            }
-        }
-        return (tileType == TileType.WALL) || (hasEnemy);
+        return (tileType == TileType.WALL) || (hasEnemy());
     }
 
     public ArrayList<GameObject> getCurrent() {

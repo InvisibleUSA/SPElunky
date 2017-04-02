@@ -6,6 +6,7 @@ import com.siemens.spe.spelunky.game.enemies.Enemy;
 import com.siemens.spe.spelunky.game.items.weapons.Dagger;
 import com.siemens.spe.spelunky.game.items.weapons.Weapon;
 import com.siemens.spe.spelunky.map.Map;
+import com.siemens.spe.spelunky.map.Tile;
 import com.siemens.spe.spelunky.map.TileType;
 import com.siemens.spe.spelunky.system.*;
 import com.siemens.spe.spelunky.system.utility.timer.TimerHandle;
@@ -76,22 +77,12 @@ public class Player implements GameObject
     }
 
     /**
-     * Deals damage to Enemy, if no weapon is equipped, function returns true
+     * Deals damage to Enemy
+     * @return true if damage was dealt
      */
     public boolean dealDamage(Map map, KeyCode playerRotation, Position pos)
     {
-        if (currentWeaponIndex == -1) {
-            switch (playerRotation) {
-                case UP:
-                    return map.getTileAt(pos.x, pos.y - 1).hasEnemy();
-                case DOWN:
-                    return map.getTileAt(pos.x, pos.y + 1).hasEnemy();
-                case LEFT:
-                    return map.getTileAt(pos.x - 1, pos.y).hasEnemy();
-                case RIGHT:
-                    return map.getTileAt(pos.x + 1, pos.y).hasEnemy();
-            }
-        }
+        if (currentWeaponIndex == -1) return false;
         ArrayList<Position> list = ((Weapon) inventory.getItemAt(currentWeaponIndex)).getEnemyPositionInDamageRadius(playerRotation,pos,map);
         if (list == null) return false;
         for (Position position: list)
@@ -113,42 +104,28 @@ public class Player implements GameObject
         Position pos = this.getStats().position;
         int x = 0, y = 0, index = -1;
         KeyCode keyCode = null;
+        Tile tmp = null;
         switch (Window.keyInput.getCode())
         {
             case UP:
                 keyCode = KeyCode.UP;
-                if (map.getTileAt(pos.x, (pos.y - 1)).getTileType() == TileType.WALL)
-                {
-                    break;
-                }
-                if (dealDamage(map, keyCode, this.getPosition())) return;
+                tmp = map.getTileAt(pos.x, pos.y - 1);
                 y -= 1;
                 break;
             case DOWN:
                 keyCode = KeyCode.DOWN;
-                if (map.getTileAt(pos.x, (pos.y + 1)).getTileType() == TileType.WALL)
-                {
-                    break;
-                }
+                tmp = map.getTileAt(pos.x, pos.y + 1);
                 y += 1;
-                if (dealDamage(map, keyCode, this.getPosition())) return;
+
                 break;
             case RIGHT:
                 keyCode = KeyCode.RIGHT;
-                if (map.getTileAt((pos.x + 1), pos.y).getTileType() == TileType.WALL)
-                {
-                    break;
-                }
-                if (dealDamage(map, keyCode, this.getPosition())) return;
+                tmp = map.getTileAt(pos.x + 1, pos.y);
                 x += 1;
                 break;
             case LEFT:
                 keyCode = KeyCode.LEFT;
-                if (map.getTileAt((pos.x - 1), pos.y).getTileType() == TileType.WALL)
-                {
-                    break;
-                }
-                if (dealDamage(map, keyCode, this.getPosition())) return;
+                tmp = map.getTileAt(pos.x - 1, pos.y);
                 x -= 1;
                 break;
             case Q:
@@ -174,6 +151,11 @@ public class Player implements GameObject
             default:
                 return;
         }
+        if (tmp != null)
+            if (tmp.blocksPlayer())
+                if (dealDamage(map, keyCode, this.getPosition()))
+                    return;
+
         if (index != -1) {
             if (dropNext) {
                 inventory.dropItem(index, map, this);

@@ -38,7 +38,6 @@ public abstract class Enemy implements GameObject {
             dealDamage(map.getPlayer());
             return;
         }
-        //TODO check if the function works previous: (map.getTileAt(x, y).getTileType() == TileType.WALL) || (map.getTileAt(x,y).getCurrent().size() != 0)
         if (map.getTileAt(x, y).blocksEnemies()){
             return;
         }

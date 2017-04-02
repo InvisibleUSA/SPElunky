@@ -22,7 +22,7 @@ public abstract class Weapon extends Item
 
     protected ArrayList<Position> getEnemyInTile(Map map, int x, int y){
         ArrayList<Position> temp = new ArrayList<>();
-        if (map.getTileAt(x, y) == null) return null;
+        if (map.getTileAt(x, y) == null) return temp;
         for (GameObject object : map.getTileAt(x, y).getCurrent())
         {
             if (object instanceof Enemy)
